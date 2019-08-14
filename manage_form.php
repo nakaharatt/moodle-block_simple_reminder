@@ -18,6 +18,8 @@ class block_simple_reminder_manage_form extends moodleform {
         
         $mform->addElement('checkbox', 'enable', get_string('enable', 'block_simple_reminder'), get_string('enableinfo', 'block_simple_reminder'));
         $modinfo = get_fast_modinfo($COURSE);
+        $groups = groups_get_all_groups($COURSE->id);
+        $groupings = groups_get_all_groupings($COURSE->id);
         $options = array();
         foreach($modinfo->cms as $cm){
             $modname = get_string('pluginname',$cm->modname);
@@ -31,6 +33,19 @@ class block_simple_reminder_manage_form extends moodleform {
         $mform->addElement('date_time_selector', 'date', get_string('date', 'block_simple_reminder'),array('optional'=>false,'startyear' => date("Y")-5, 'stopyear' => date("Y")+5,'step' => 5));
         
         $mform->addElement('checkbox', 'completion', get_string('completion', 'block_simple_reminder'), get_string('usecompletion', 'block_simple_reminder'));
+        
+        $options = array(0=>get_string('none'));
+        foreach($groups as $group){
+            $options[$group->id] = $group->name;
+        }
+        $mform->addElement('select','groupid',get_string('group'),$options);
+        
+        $options = array(0=>get_string('none'));
+        foreach($groupings as $grouping){
+            $options[$grouping->id] = $grouping->name;
+        }
+        $mform->addElement('select','groupingid',get_string('grouping','group'),$options);
+        
         
         $mform->addElement('hidden','teacher',$USER->id);
         $mform->setType('teacher', PARAM_INT);

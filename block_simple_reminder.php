@@ -49,6 +49,13 @@ class block_simple_reminder extends block_base {
                 $instance = $DB->get_record($module->name,array('id'=>$cm->instance));
                 $this->content->text .= '<p>'.get_string('reminderfor','block_simple_reminder').$instance->name.'</p>';
                 $this->content->text .= '<p>'.get_string('dateto','block_simple_reminder').'<br>'.userdate($simplereminder->date).'</p>';
+                if($simplereminder->groupid){
+                    $group = groups_get_group_name($simplereminder->groupid);
+                    $this->content->text .= '<p>'.get_string('group').':'.$group.'</p>';
+                }elseif($simplereminder->groupingid){
+                    $grouping = groups_get_grouping_name($simplereminder->groupingid);
+                    $this->content->text .= '<p>'.get_string('grouping','group').':'.$grouping.'</p>';
+                }
             }
         }
         $this->content->text .= '<a href="'.$CFG->wwwroot.'/blocks/simple_reminder/manage.php?course='.$this->page->course->id.'&block='.$this->instance->id.'">'.get_string('managereminder','block_simple_reminder').'</a>';
@@ -75,14 +82,23 @@ class block_simple_reminder extends block_base {
             $course = $DB->get_record('course',array('id'=>$simplereminder->course));
             $cm = $DB->get_record('course_modules',array('id'=>$simplereminder->cmid));
             $module = $DB->get_record('modules',array('id'=>$cm->module));
+            $completion = new completion_info($course);
+            $completion->set_module_viewed($cm);
             if($course->visible && $module){
                 mtrace($simplereminder->id.':'.$course->fullname.':'.$module->id);
                 if($simplereminder->date < time()){
                     $context = context_course::instance($course->id, MUST_EXIST);
                     $teacher = $DB->get_record('user',array('id'=>$simplereminder->teacher));
-                    $users = get_enrolled_users($context);
+                    //Group mode
+                    if($simplereminder->groupid){
+                        $users = groups_get_groups_members($simplereminder->groupid);
+                    }elseif($simplereminder->groupingid){
+                        $users = groups_get_grouping_members($simplereminder->groupid);
+                    }else{
+                        $users = get_enrolled_users($context);
+                    }
                     foreach($users as $user){
-                        if($simplereminder->completion){
+                        if($simplereminder->completion && $completion->is_enabled()){
                             require_once(__DIR__.'/../../mod/'.$module->name.'/lib.php');
                             $function = $module->name.'_get_completion_state';
                             if(function_exists($function)){

@@ -33,17 +33,31 @@ if($mform->is_cancelled()){
     //Back to course.
     redirect($returnurl);
 }elseif($fromform = $mform->get_data()){
+    var_dump($fromform);
+    if($fromform->completion == 1){
+        $cm = $DB->get_record('course_modules',array('id'=>$fromform->cmid));
+        $module = $DB->get_record('modules',array('id'=>$cm->module));
+        $completion = new completion_info($course);
+        $completion->set_module_viewed($cm);
+      
+        if(!$completion->is_enabled()){
+            //当該インスタンスに活動完了が設定されていない時，シンプルリマインダーでは0を設定する
+            //エラーメッセージを出したい気もする
+            $fromform->completion = 0;
+        }
+    }
     if($simplereminder){
         $fromform->id = $simplereminder->id;
         $fromform->timemodified = time();
         $DB->update_record('block_simple_reminder',$fromform);
-        
+
     }else{
         $fromform->timecreated = time();
         $fromform->timemodified = time();
         $DB->insert_record('block_simple_reminder',$fromform);
     }
     redirect($returnurl);
+    
 }else{
     $PAGE->set_pagelayout('incourse');
     $PAGE->set_url($CFG->wwwroot.'/blocks/simple_reminder/manage.php?course='.$courseid.'&block='.$blockid);
