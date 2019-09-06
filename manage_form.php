@@ -29,6 +29,7 @@ class block_simple_reminder_manage_form extends moodleform {
         
         $mform->addElement('textarea', 'message', get_string('message', 'block_simple_reminder'));
         $mform->setType('message', PARAM_TEXT);
+        $mform->addRule('message', null, 'required', null, 'client');
 
         $mform->addElement('date_time_selector', 'date', get_string('date', 'block_simple_reminder'),array('optional'=>false,'startyear' => date("Y")-5, 'stopyear' => date("Y")+5,'step' => 5));
         
