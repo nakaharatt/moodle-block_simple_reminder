@@ -82,8 +82,6 @@ class block_simple_reminder extends block_base {
             $course = $DB->get_record('course',array('id'=>$simplereminder->course));
             $cm = $DB->get_record('course_modules',array('id'=>$simplereminder->cmid));
             $module = $DB->get_record('modules',array('id'=>$cm->module));
-            $completion = new completion_info($course);
-            $completion->set_module_viewed($cm);
             if($course->visible && $module){
                 mtrace($simplereminder->id.':'.$course->fullname.':'.$module->id);
                 if($simplereminder->date < time()){
@@ -98,7 +96,7 @@ class block_simple_reminder extends block_base {
                         $users = get_enrolled_users($context);
                     }
                     foreach($users as $user){
-                        if($simplereminder->completion && $completion->is_enabled()){
+                        if($simplereminder->completion && $cm->completion != 0){
                             require_once(__DIR__.'/../../mod/'.$module->name.'/lib.php');
                             $function = $module->name.'_get_completion_state';
                             if(function_exists($function)){
