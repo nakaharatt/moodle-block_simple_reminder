@@ -6,7 +6,7 @@
 
 1) Get the code using git by running the following command in the top level folder of your Moodle install:
 
-`git clone git://github.com/nakaharatt/moodle-block_simple_reminder.git report/discussion_metrics`
+`git clone git://github.com/nakaharatt/moodle-block_simple_reminder.git blocks/simple_reminder`
 
 2) Login to Moodle as the admin user and click on Notifications in the Site Administration panel.
 
