@@ -44,17 +44,20 @@ class block_simple_reminder extends block_base {
         $simplereminder = $DB->get_record('block_simple_reminder',array('block'=>$this->instance->id));
         if($simplereminder){
             if($simplereminder->enable){
-                $cm = $DB->get_record('course_modules',array('id'=>$simplereminder->cmid));
-                $module = $DB->get_record('modules',array('id'=>$cm->module));
-                $instance = $DB->get_record($module->name,array('id'=>$cm->instance));
-                $this->content->text .= '<p>'.get_string('reminderfor','block_simple_reminder').$instance->name.'</p>';
-                $this->content->text .= '<p>'.get_string('dateto','block_simple_reminder').'<br>'.userdate($simplereminder->date).'</p>';
-                if($simplereminder->groupid){
-                    $group = groups_get_group_name($simplereminder->groupid);
-                    $this->content->text .= '<p>'.get_string('group').':'.$group.'</p>';
-                }elseif($simplereminder->groupingid){
-                    $grouping = groups_get_grouping_name($simplereminder->groupingid);
-                    $this->content->text .= '<p>'.get_string('grouping','group').':'.$grouping.'</p>';
+                if($cm = $DB->get_record('course_modules',array('id'=>$simplereminder->cmid))){
+                    $module = $DB->get_record('modules',array('id'=>$cm->module));
+                    $instance = $DB->get_record($module->name,array('id'=>$cm->instance));
+                    $this->content->text .= '<p>'.get_string('reminderfor','block_simple_reminder').$instance->name.'</p>';
+                    $this->content->text .= '<p>'.get_string('dateto','block_simple_reminder').'<br>'.userdate($simplereminder->date).'</p>';
+                    if($simplereminder->groupid){
+                        $group = groups_get_group_name($simplereminder->groupid);
+                        $this->content->text .= '<p>'.get_string('group').':'.$group.'</p>';
+                    }elseif($simplereminder->groupingid){
+                        $grouping = groups_get_grouping_name($simplereminder->groupingid);
+                        $this->content->text .= '<p>'.get_string('grouping','group').':'.$grouping.'</p>';
+                    }
+                }else{
+                    $this->content->text .= "<p>Can't find the instance. Please chek you settings.</p>";
                 }
             }
         }
