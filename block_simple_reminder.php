@@ -57,7 +57,7 @@ class block_simple_reminder extends block_base {
                         $this->content->text .= '<p>'.get_string('grouping','group').':'.$grouping.'</p>';
                     }
                 }else{
-                    $this->content->text .= "<p>Can't find the instance. Please chek you settings.</p>";
+                    $this->content->text .= "<p>Can't find the instance. Please chek your settings.</p>";
                 }
             }
         }
