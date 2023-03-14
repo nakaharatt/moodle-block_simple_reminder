@@ -33,7 +33,6 @@ if($mform->is_cancelled()){
     //Back to course.
     redirect($returnurl);
 }elseif($fromform = $mform->get_data()){
-    var_dump($fromform);
     if($fromform->completion == 1){
         $cm = $DB->get_record('course_modules',array('id'=>$fromform->cmid));
         $module = $DB->get_record('modules',array('id'=>$cm->module));
